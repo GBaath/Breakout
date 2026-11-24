@@ -7,7 +7,6 @@ import javax.swing.SwingUtilities;
 
 public class Main {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
             Game game = new Game();
             //window
             JFrame window = new JFrame("Breakout");
@@ -22,8 +21,5 @@ public class Main {
             window.setVisible(true);
             //run
             game.start();
-            //focus on window
-            SwingUtilities.invokeLater(game::requestFocusInWindow);
-        });
     }
 }

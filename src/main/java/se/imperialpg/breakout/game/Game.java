@@ -17,11 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Game extends JPanel implements Runnable, KeyListener {
+    //const
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
     private static final int FPS = 60;
     private static final double DELTA_TIME = 1.0 / FPS;
-    private static final long FRAME_TIME_NANOS = 1_000_000_000L / FPS;
 
     private final List<GameObject> objects = new ArrayList<>();
     private final Level level = new Level();
@@ -40,16 +40,13 @@ public class Game extends JPanel implements Runnable, KeyListener {
     }
 
     public void start() {
-        if (running) {
-            return;
-        }
 
         initializeGame();
         running = true;
         new Thread(this, "gameloop").start();
     }
 
-    private synchronized void initializeGame() {
+    private void initializeGame() {
         objects.clear();
         gameOver = false;
         score = 0;
@@ -58,41 +55,35 @@ public class Game extends JPanel implements Runnable, KeyListener {
         level.initialize(this);
     }
 
-    public synchronized void addGameObject(GameObject object) {
+    public void addGameObject(GameObject object) {
         objects.add(object);
         object.initialize(this);
     }
 
     @Override
     public void run() {
-        long previousTime = System.nanoTime();
-        long accumulator = 0;
+        long frameTime = 1000 / FPS;
 
         while (running) {
-            long currentTime = System.nanoTime();
-            accumulator += currentTime - previousTime;
-            previousTime = currentTime;
+            long start = System.nanoTime();
 
-            while (accumulator >= FRAME_TIME_NANOS && running) {
-                updateGame();
-                accumulator -= FRAME_TIME_NANOS;
-            }
-
+            updateGame();
             repaint();
 
-            long sleepNanos = FRAME_TIME_NANOS - accumulator;
-            if (sleepNanos > 0) {
+            long elapsed = System.nanoTime() - start;
+            long sleepTime = frameTime - elapsed;
+
+            if (sleepTime > 0) {
                 try {
-                    Thread.sleep(sleepNanos / 1_000_000, (int) (sleepNanos % 1_000_000));
-                } catch (InterruptedException exception) {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException ignored) {
                     running = false;
-                    Thread.currentThread().interrupt();
                 }
             }
         }
     }
 
-    private synchronized void updateGame() {
+    private void updateGame() {
         if (gameOver) {
             return;
         }
@@ -103,7 +94,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
     }
 
     @Override
-    protected synchronized void paintComponent(Graphics graphics) {
+    protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         renderGame((Graphics2D) graphics);
     }
