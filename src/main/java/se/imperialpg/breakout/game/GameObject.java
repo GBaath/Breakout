@@ -18,6 +18,18 @@ public abstract class GameObject {
     public void initialize(Game game) {
     }
 
+    /**
+     * check this gameobject dimensions overlaps against another
+     * @param other the gameobject to check overlap to
+     * @return found overlap
+     */
+    public boolean intersects(GameObject other) {
+        return x < other.x + other.width
+                && x + width > other.x
+                && y < other.y + other.height
+                && y + height > other.y;
+    }
+
     public abstract void update(double deltaTime);
 
     public abstract void render(Graphics2D graphics);
