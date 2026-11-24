@@ -17,12 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Game extends JPanel implements Runnable, KeyListener {
-    //const
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 600;
-    private static final int FPS = 60;
-    private static final double DELTA_TIME = 1.0 / FPS;
 
+    private final GameProperties gameProperties;
     private final List<GameObject> objects = new ArrayList<>();
     private final Level level = new Level();
     private volatile boolean running;
@@ -37,6 +33,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
         setBackground(Color.BLACK);
         setFocusable(true);
         addKeyListener(this);
+        gameProperties = new GameProperties(800,600,60);
     }
 
     public void start() {
@@ -62,7 +59,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     @Override
     public void run() {
-        long frameTime = 1000 / FPS;
+        long frameTime = gameProperties.deltaTime();
 
         while (running) {
             long start = System.nanoTime();
@@ -89,7 +86,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
         }
 
         for (GameObject object : objects) {
-            object.update(DELTA_TIME);
+            object.update(gameProperties.deltaTime());
         }
     }
 
