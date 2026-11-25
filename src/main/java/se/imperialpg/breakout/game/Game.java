@@ -70,7 +70,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
             updateGame();
             repaint();
 
-            long elapsed = System.nanoTime() - start;
+            long elapsed = (System.nanoTime() - start) / 1_000_000;
             long sleepTime = frameTime - elapsed;
 
             if (sleepTime > 0) {
