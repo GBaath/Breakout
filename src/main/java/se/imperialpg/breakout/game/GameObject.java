@@ -15,11 +15,11 @@ public abstract class GameObject {
         this.height = height;
     }
 
-    public void initialize(Game game) {
-    }
+    public abstract void initialize(Game game);
 
     /**
      * check this gameobject dimensions overlaps against another
+     * 
      * @param other the gameobject to check overlap to
      * @return found overlap
      */

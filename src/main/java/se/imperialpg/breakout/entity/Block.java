@@ -1,5 +1,6 @@
 package se.imperialpg.breakout.entity;
 
+import se.imperialpg.breakout.game.Game;
 import se.imperialpg.breakout.game.GameObject;
 
 import java.awt.Color;
@@ -10,6 +11,11 @@ public class Block extends GameObject {
         super(x, y, 80, 20);
     }
     private final int life =1;
+
+    @Override
+    public void initialize(Game game) {
+
+    }
 
     @Override
     public void update(double deltaTime) {

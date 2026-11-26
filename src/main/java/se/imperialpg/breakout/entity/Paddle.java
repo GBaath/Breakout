@@ -47,6 +47,11 @@ public class Paddle extends GameObject implements InputReceiver {
      * @param deltaTime the time elapsed since the previous update, in seconds
      */
     @Override
+    public void initialize(Game game) {
+
+    }
+
+    @Override
     public void update(double deltaTime) {
         double speed = isBoosting ? SPEED * SPEEDBOOST : SPEED;
 

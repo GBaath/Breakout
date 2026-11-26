@@ -5,6 +5,8 @@ import se.imperialpg.breakout.entity.Paddle;
 import se.imperialpg.breakout.level.Level;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import java.awt.Window;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -20,36 +22,50 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     private final GameProperties gameProperties;
     private final List<GameObject> objects = new ArrayList<>();
+
     private final Level level = new Level();
+    private final Menu menu = new Menu();
     private volatile boolean running;
-    private boolean gameOver;
+    private volatile GameState gameState = GameState.Menu; //start in menu
+
+    //score things to extract later
     private int score;
     private int highScore;
     private String playerName = "Player";
     private int roundNumber = 1;
 
+    private enum GameState{
+        Menu,
+        Game,
+        GameOver,
+        ScoreList
+    }
+
+
     public Game() {
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        gameProperties = new GameProperties(800,600,60);
+        setPreferredSize(new Dimension(gameProperties.width(), gameProperties.height()));
         setBackground(Color.BLACK);
         setFocusable(true);
         addKeyListener(this);
-        gameProperties = new GameProperties(800,600,60);
     }
 
     public void start() {
-
-        initializeGame();
         running = true;
         new Thread(this, "gameloop").start();
     }
 
     private void initializeGame() {
         objects.clear();
-        gameOver = false;
+        gameState = GameState.Game;
         score = 0;
         addGameObject(new Paddle(350, 550));
         addGameObject(new Ball(390, 530));
         level.initialize(this);
+    }
+
+    public void endGame() {
+        gameState = GameState.GameOver;
     }
 
     public void addGameObject(GameObject object) {
@@ -64,7 +80,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
         while (running) {
             long start = System.nanoTime();
 
-            updateGame();
+            update();
             repaint();
 
             long elapsed = (System.nanoTime() - start) / 1_000_000;
@@ -80,35 +96,81 @@ public class Game extends JPanel implements Runnable, KeyListener {
         }
     }
 
-    private void updateGame() {
-        if (gameOver) {
-            return;
+    private void update() {
+        switch (gameState) {
+            case Menu -> updateMenu();
+            case Game -> updateGame();
+            case GameOver -> updateGameOver();
+            case ScoreList -> updateScoreList();
         }
+    }
 
+    private void updateMenu() {
+        Menu.Selection selection = menu.consumeSelection();
+        if (selection == Menu.Selection.PLAY) {
+            initializeGame();
+        } else if (selection == Menu.Selection.QUIT) {
+            running = false;
+            Window window = SwingUtilities.getWindowAncestor(this);
+            if (window != null) {
+                SwingUtilities.invokeLater(window::dispose);
+            }
+        }
+    }
+
+    private void updateGame() {
         for (GameObject object : objects) {
             object.update(gameProperties.deltaTime());
         }
     }
 
+    private void updateGameOver() {
+    }
+
+    private void updateScoreList() {
+    }
+
     @Override
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
-        renderGame((Graphics2D) graphics);
+        renderState((Graphics2D) graphics);
+    }
+
+    private void renderState(Graphics2D graphics) {
+        switch (gameState) {
+            case Menu -> renderMenu(graphics);
+            case Game -> renderGame(graphics);
+            case GameOver -> renderGameOver(graphics);
+            case ScoreList -> renderScoreList(graphics);
+        }
+    }
+
+    private void renderMenu(Graphics2D graphics) {
+        menu.render(graphics, getWidth(), getHeight());
     }
 
     private void renderGame(Graphics2D graphics) {
+        renderObjectsAndHud(graphics);
+    }
+
+    private void renderGameOver(Graphics2D graphics) {
+        renderObjectsAndHud(graphics);
+        graphics.setColor(Color.RED);
+        graphics.setFont(new Font("Arial", Font.BOLD, 48));
+        String text = "GAME OVER";
+        FontMetrics metrics = graphics.getFontMetrics();
+        graphics.drawString(text, (WIDTH - metrics.stringWidth(text)) / 2, HEIGHT / 2);
+    }
+
+    private void renderScoreList(Graphics2D graphics) {
+    }
+
+    private void renderObjectsAndHud(Graphics2D graphics) {
         for (GameObject object : objects) {
             object.render(graphics);
         }
 
         renderHud(graphics);
-        if (gameOver) {
-            graphics.setColor(Color.RED);
-            graphics.setFont(new Font("Arial", Font.BOLD, 48));
-            String text = "GAME OVER";
-            FontMetrics metrics = graphics.getFontMetrics();
-            graphics.drawString(text, (WIDTH - metrics.stringWidth(text)) / 2, HEIGHT / 2);
-        }
     }
 
     private void renderHud(Graphics2D graphics) {
@@ -130,18 +192,34 @@ public class Game extends JPanel implements Runnable, KeyListener {
         }
     }
 
+    private void handleGameOverInput(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.VK_R) {
+            initializeGame();
+        }
+    }
+
     @Override
     public void keyPressed(KeyEvent event) {
-        if (gameOver && event.getKeyCode() == KeyEvent.VK_R) {
-            initializeGame();
-            return;
+        switch (gameState) {
+            case Menu -> handleMenuInput(event);
+            case Game -> dispatchInput(event);
+            case GameOver -> handleGameOverInput(event);
+            case ScoreList -> handleScoreListInput(event);
         }
-        dispatchInput(event);
+    }
+
+    private void handleMenuInput(KeyEvent event) {
+        menu.receiveInput(event);
+    }
+
+    private void handleScoreListInput(KeyEvent event) {
     }
 
     @Override
     public void keyReleased(KeyEvent event) {
-        dispatchInput(event);
+        if (gameState == GameState.Game) {
+            dispatchInput(event);
+        }
     }
 
     @Override
