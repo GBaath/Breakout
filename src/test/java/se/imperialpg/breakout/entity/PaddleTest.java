@@ -14,7 +14,8 @@ public class PaddleTest {
 
     private Paddle paddle;
     private Component source;
-    private static final double DELTA_TIME = 0.016;
+
+    private static final int DELTA_TIME = 1000 / 60;
     private static final int SPAWN_X = 350;
 
     private static final int moveLeftKey = KeyEvent.VK_LEFT;
@@ -62,6 +63,12 @@ public class PaddleTest {
     }
 
     @Test
+    void paddleGivenNoInputDoesNotMove() {
+        paddle.update(DELTA_TIME);
+        assertEquals(initialXPos, paddle.getXPosition(), 0.001);
+    }
+
+    @Test
     void paddleMovesLeftWhenLeftKeyIsPressed() {
         paddle.receiveInput(moveLeftKeyPressed);
         paddle.update(DELTA_TIME);
@@ -100,7 +107,7 @@ public class PaddleTest {
     @Test
     void paddleShouldMove300PixelsInOneSecond() {
         paddle.receiveInput(moveLeftKeyPressed);
-        paddle.update(1.0);
+        paddle.update(1000);
         assertEquals(initialXPos - SPEED, paddle.getXPosition(), 0.001);
     }
 
