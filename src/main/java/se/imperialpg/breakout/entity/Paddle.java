@@ -10,6 +10,8 @@ import java.awt.event.KeyEvent;
 
 /**
  * Represents the player-controlled paddle in the game.
+ * 
+ * @author Stefan Markan
  */
 public class Paddle extends GameObject implements InputReceiver {
     private static final int moveLeftKey = KeyEvent.VK_LEFT;
@@ -51,15 +53,24 @@ public class Paddle extends GameObject implements InputReceiver {
 
     }
 
+    /**
+     * Updates the paddle's position based on the current movement input.
+     * <p>
+     * The paddle moves at its normal speed or boosted speed depending on
+     * whether the speed boost is active. Its movement is restricted to
+     * the horizontal boundaries of the game window.
+     *
+     * @param deltaTime the time elapsed since the previous update, in milli seconds
+     */
     @Override
     public void update(double deltaTimeMillis) {
         double speed = isBoosting ? SPEED * SPEEDBOOST : SPEED;
 
         if (movingLeft && x > 0) {
-            x -= speed * deltaTimeMillis/1000;
+            x -= speed * deltaTimeMillis / 1000;
         }
         if (movingRight && x < 800 - width) {
-            x += speed * deltaTimeMillis/1000;
+            x += speed * deltaTimeMillis / 1000;
         }
     }
 
