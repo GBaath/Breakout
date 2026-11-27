@@ -44,8 +44,14 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     public Game() {
         //window settings
-        gameProperties = new GameProperties(800,600,60);
-        setPreferredSize(new Dimension(gameProperties.width(), gameProperties.height()));
+        gameProperties = new GameProperties(
+                new GameProperties.WindowProperties(800, 600, 60),
+                new GameProperties.DifficultyProperties(100, 300, 3, 8)
+        );
+        setPreferredSize(new Dimension(
+                gameProperties.windowProperties().width(),
+                gameProperties.windowProperties().height()
+        ));
         setBackground(Color.BLACK);
         setFocusable(true);
         //setup keyevent listener
@@ -68,9 +74,8 @@ public class Game extends JPanel implements Runnable, KeyListener {
         objects.clear();
         gameState = GameState.Game;
         score = 0;
-        addGameObject(new Paddle(350, 550));
+        addGameObject(new Paddle(350,550));
         addGameObject(new Ball(390, 530));
-        level.initialize(this);
     }
 
     /**
@@ -97,12 +102,12 @@ public class Game extends JPanel implements Runnable, KeyListener {
         long frameTime = gameProperties.deltaTime();
 
         while (running) {
-            long start = System.nanoTime();
+            long start = System.currentTimeMillis();
 
             update();
             repaint();
 
-            long elapsed = (System.nanoTime() - start) / 1_000_000;
+            long elapsed = (System.currentTimeMillis() - start);
             long sleepTime = frameTime - elapsed;
 
             if (sleepTime > 0) {
@@ -214,7 +219,9 @@ public class Game extends JPanel implements Runnable, KeyListener {
         graphics.setFont(new Font("Arial", Font.BOLD, 48));
         String text = "GAME OVER";
         FontMetrics metrics = graphics.getFontMetrics();
-        graphics.drawString(text, (WIDTH - metrics.stringWidth(text)) / 2, HEIGHT / 2);
+        graphics.drawString(text,
+                (gameProperties.windowProperties().width() - metrics.stringWidth(text)) / 2,
+                gameProperties.windowProperties().height() / 2);
     }
 
     /**
@@ -245,8 +252,8 @@ public class Game extends JPanel implements Runnable, KeyListener {
         graphics.setFont(new Font("Arial", Font.BOLD, 18));
         graphics.drawString("Score: " + score, 20, 30);
         graphics.drawString("High Score: " + highScore, 20, 55);
-        graphics.drawString("Player: " + playerName, WIDTH - 180, 30);
-        graphics.drawString("Round: " + roundNumber, WIDTH - 180, 55);
+        graphics.drawString("Player: " + playerName, gameProperties.windowProperties().width() - 180, 30);
+        graphics.drawString("Round: " + roundNumber, gameProperties.windowProperties().width() - 180, 55);
     }
 
     /**
@@ -265,7 +272,6 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     /**
      * used to restart game
-     * @param event
      */
     private void handleGameOverInput(KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.VK_R) {
