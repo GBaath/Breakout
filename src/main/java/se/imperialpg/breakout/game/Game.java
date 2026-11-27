@@ -34,7 +34,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
     private String playerName = "Player";
     private int roundNumber = 1;
 
-    private enum GameState{
+    private enum GameState {
         Menu,
         Game,
         GameOver,
@@ -74,7 +74,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
         objects.clear();
         gameState = GameState.Game;
         score = 0;
-        addGameObject(new Paddle(350,550));
+        addGameObject(new Paddle(350, 550));
         addGameObject(new Ball(390, 530));
     }
 
@@ -83,10 +83,12 @@ public class Game extends JPanel implements Runnable, KeyListener {
      */
     public void endGame() {
         gameState = GameState.GameOver;
+        objects.clear();
     }
 
     /**
      * add a new gameobject and add to subscription list, calls initialize
+     *
      * @param object the new gameobject to add
      */
     public void addGameObject(GameObject object) {
@@ -172,6 +174,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     /**
      * called from jpanel repaint
+     *
      * @param graphics the <code>Graphics</code> object to protect
      */
     @Override
@@ -182,6 +185,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     /**
      * switch for all render states
+     *
      * @param graphics renderer to use
      */
     private void renderState(Graphics2D graphics) {
@@ -195,6 +199,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     /**
      * bridge to menu.renderMenu
+     *
      * @param graphics renderer to use
      */
     private void renderMenu(Graphics2D graphics) {
@@ -203,6 +208,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     /**
      * bridge to game.renderGame
+     *
      * @param graphics renderer to use
      */
     private void renderGame(Graphics2D graphics) {
@@ -211,6 +217,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     /**
      * renderObjectsAndHud + Gameovertexts
+     *
      * @param graphics renderer to use
      */
     private void renderGameOver(Graphics2D graphics) {
@@ -222,10 +229,19 @@ public class Game extends JPanel implements Runnable, KeyListener {
         graphics.drawString(text,
                 (gameProperties.windowProperties().width() - metrics.stringWidth(text)) / 2,
                 gameProperties.windowProperties().height() / 2);
+
+        graphics.setColor(Color.WHITE);
+        graphics.setFont(new Font("Arial", Font.PLAIN, 24));
+        String restartText = "Press R to restart or Esc for menu";
+        metrics = graphics.getFontMetrics();
+        graphics.drawString(restartText,
+                (gameProperties.windowProperties().width() - metrics.stringWidth(restartText)) / 2,
+                gameProperties.windowProperties().height() / 2 + 40);
     }
 
     /**
      * bridge to game.RenderScorelist
+     *
      * @param graphics renderer to use
      */
     private void renderScoreList(Graphics2D graphics) {
@@ -233,6 +249,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     /**
      * calls the render function for each gameobject in list as well as render hud
+     *
      * @param graphics renderer to use
      */
     private void renderObjectsAndHud(Graphics2D graphics) {
@@ -245,6 +262,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     /**
      * renders hud elements
+     *
      * @param graphics renderer to use
      */
     private void renderHud(Graphics2D graphics) {
@@ -258,9 +276,15 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     /**
      * send Keyevents to all gameobjects
+     *
      * @param event
      */
-    private void dispatchInput(KeyEvent event) {
+    private void dispatchInput(KeyEvent event)
+    {
+        //debug endgame
+        if(event.getKeyCode() == KeyEvent.VK_K)
+            endGame();
+
         synchronized (this) {
             for (GameObject object : objects) {
                 if (object instanceof InputReceiver receiver) {
@@ -276,11 +300,14 @@ public class Game extends JPanel implements Runnable, KeyListener {
     private void handleGameOverInput(KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.VK_R) {
             initializeGame();
+        } else if (event.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            gameState = GameState.Menu;
         }
     }
 
     /**
      * bridge to handle pressedinput to gamestates
+     *
      * @param event the event to be processed
      */
     @Override
