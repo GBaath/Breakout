@@ -52,14 +52,14 @@ public class Paddle extends GameObject implements InputReceiver {
     }
 
     @Override
-    public void update(double deltaTime) {
+    public void update(double deltaTimeMillis) {
         double speed = isBoosting ? SPEED * SPEEDBOOST : SPEED;
 
         if (movingLeft && x > 0) {
-            x -= speed * deltaTime;
+            x -= speed * deltaTimeMillis/1000;
         }
         if (movingRight && x < 800 - width) {
-            x += speed * deltaTime;
+            x += speed * deltaTimeMillis/1000;
         }
     }
 

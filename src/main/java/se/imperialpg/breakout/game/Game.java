@@ -102,12 +102,12 @@ public class Game extends JPanel implements Runnable, KeyListener {
         long frameTime = gameProperties.deltaTime();
 
         while (running) {
-            long start = System.nanoTime();
+            long start = System.currentTimeMillis();
 
             update();
             repaint();
 
-            long elapsed = (System.nanoTime() - start) / 1_000_000;
+            long elapsed = (System.currentTimeMillis() - start);
             long sleepTime = frameTime - elapsed;
 
             if (sleepTime > 0) {
