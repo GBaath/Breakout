@@ -95,4 +95,20 @@ public class Paddle extends GameObject implements InputReceiver {
             }
         }
     }
+
+    /**
+     * Returns the x position of the Paddle
+     * 
+     * @return this.x
+     */
+    public double getXPosition() {
+        return this.x;
+    }
+
+    /**
+     * Resets the x position of the Paddle
+     */
+    public void resetXPosition() {
+        this.x = 350;
+    }
 }
