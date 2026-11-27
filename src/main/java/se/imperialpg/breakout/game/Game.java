@@ -76,6 +76,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
         score = 0;
         addGameObject(new Paddle(350, 550));
         addGameObject(new Ball(390, 530));
+
     }
 
     /**
@@ -217,23 +218,28 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     /**
      * renderObjectsAndHud + Gameovertexts
-     *
      * @param graphics renderer to use
      */
     private void renderGameOver(Graphics2D graphics) {
+        //TODO remove this and place in highscore list somewher
         renderObjectsAndHud(graphics);
+
+        //GO text
         graphics.setColor(Color.RED);
         graphics.setFont(new Font("Arial", Font.BOLD, 48));
         String text = "GAME OVER";
         FontMetrics metrics = graphics.getFontMetrics();
+        //screen middle
         graphics.drawString(text,
                 (gameProperties.windowProperties().width() - metrics.stringWidth(text)) / 2,
                 gameProperties.windowProperties().height() / 2);
 
+        //key prompt
         graphics.setColor(Color.WHITE);
         graphics.setFont(new Font("Arial", Font.PLAIN, 24));
         String restartText = "Press R to restart or Esc for menu";
         metrics = graphics.getFontMetrics();
+        //screen middle below
         graphics.drawString(restartText,
                 (gameProperties.windowProperties().width() - metrics.stringWidth(restartText)) / 2,
                 gameProperties.windowProperties().height() / 2 + 40);
@@ -276,7 +282,6 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     /**
      * send Keyevents to all gameobjects
-     *
      * @param event
      */
     private void dispatchInput(KeyEvent event)
@@ -296,6 +301,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     /**
      * used to restart game
+     * R for restar ESC for close
      */
     private void handleGameOverInput(KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.VK_R) {
@@ -320,6 +326,10 @@ public class Game extends JPanel implements Runnable, KeyListener {
         }
     }
 
+    /**
+     * send input to menu class
+     * @param event event to send
+     */
     private void handleMenuInput(KeyEvent event) {
         menu.receiveInput(event);
     }
