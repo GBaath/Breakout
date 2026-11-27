@@ -2,11 +2,12 @@ package se.imperialpg.breakout.entity;
 
 import se.imperialpg.breakout.game.Game;
 import se.imperialpg.breakout.game.GameObject;
+import se.imperialpg.breakout.game.BallCollider;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class Block extends GameObject {
+public class Block extends GameObject implements BallCollider {
     public Block(double x, double y) {
         super(x, y, 80, 20);
     }
@@ -19,6 +20,10 @@ public class Block extends GameObject {
 
     @Override
     public void update(double deltaTime) {
+    }
+
+    @Override
+    public void onHit() {
     }
 
     @Override

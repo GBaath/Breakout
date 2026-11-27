@@ -21,6 +21,9 @@ public class Ball extends GameObject {
     public void update(double deltaTime) {
     }
 
+    public void onIntersection(double x, double y) {
+    }
+
     @Override
     public void render(Graphics2D graphics) {
         graphics.setColor(Color.CYAN);

@@ -3,6 +3,7 @@ package se.imperialpg.breakout.entity;
 import se.imperialpg.breakout.game.Game;
 import se.imperialpg.breakout.game.GameObject;
 import se.imperialpg.breakout.game.InputReceiver;
+import se.imperialpg.breakout.game.BallCollider;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -11,7 +12,7 @@ import java.awt.event.KeyEvent;
 /**
  * Represents the player-controlled paddle in the game.
  */
-public class Paddle extends GameObject implements InputReceiver {
+public class Paddle extends GameObject implements InputReceiver, BallCollider {
     private static final int moveLeftKey = KeyEvent.VK_LEFT;
     private static final int moveLeftAltKey = KeyEvent.VK_A;
 

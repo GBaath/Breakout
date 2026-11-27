@@ -22,6 +22,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     private final GameProperties gameProperties;
     private final List<GameObject> objects = new ArrayList<>();
+    private final CollisionHelper collisionHelper = new CollisionHelper();
 
     private final Level level = new Level();
     private final Menu menu = new Menu();
@@ -165,6 +166,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
         for (GameObject object : objects) {
             object.update(gameProperties.deltaTime());
         }
+        collisionHelper.checkBallIntersections(objects, gameProperties, this);
     }
 
     private void updateGameOver() {
